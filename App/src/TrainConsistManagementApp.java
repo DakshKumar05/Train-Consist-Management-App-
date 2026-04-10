@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 class Bogie {
@@ -11,42 +12,44 @@ class Bogie {
         this.capacity = capacity;
     }
 
+    // Helper method to get type for grouping
+    public String getType() {
+        return type;
+    }
+
     @Override
     public String toString() {
-        return "Bogie{Type='" + type + "', Capacity=" + capacity + "}";
+        return "(" + type + ", Cap: " + capacity + ")";
     }
 }
 
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
-        // 1. Reuse/Create the list of bogies (from UC7)
+        // 1. Create a diverse list of bogies
         List<Bogie> consist = new ArrayList<>();
         consist.add(new Bogie("Sleeper", 72));
-        consist.add(new Bogie("AC Chair Car", 60));
-        consist.add(new Bogie("First Class", 24));
+        consist.add(new Bogie("AC Chair", 60));
         consist.add(new Bogie("Sleeper", 72));
-        consist.add(new Bogie("General", 90));
+        consist.add(new Bogie("First Class", 24));
+        consist.add(new Bogie("AC Chair", 60));
+        consist.add(new Bogie("Goods-Rectangular", 100));
 
-        System.out.println("Original Consist:");
-        consist.forEach(System.out::println);
+        System.out.println("--- Flat Consist List ---");
+        System.out.println(consist);
 
-        // 2. Define the filtering threshold
-        int capacityThreshold = 60;
+        // 2. Apply groupingBy to categorize bogies by their type
+        // Key: Bogie Type (String), Value: List of Bogies belonging to that type
+        Map<String, List<Bogie>> groupedBogies = consist.stream()
+                .collect(Collectors.groupingBy(Bogie::getType));
 
-        // 3. Apply Stream API: stream() -> filter() -> collect()
-        List<Bogie> highCapacityBogies = consist.stream()
-                .filter(b -> b.capacity > capacityThreshold) // Lambda expression for condition
-                .collect(Collectors.toList());               // Terminal operation to create new list
+        // 3. Display the structured output
+        System.out.println("\n--- Grouped Bogie Report ---");
+        groupedBogies.forEach((type, list) -> {
+            System.out.println("Category: [" + type + "] -> Count: " + list.size());
+            System.out.println("   Details: " + list);
+        });
 
-        // 4. Display the filtered results
-        System.out.println("\n--- High-Capacity Bogies (Capacity > " + capacityThreshold + ") ---");
-        if (highCapacityBogies.isEmpty()) {
-            System.out.println("No bogies found matching the criteria.");
-        } else {
-            highCapacityBogies.forEach(System.out::println);
-        }
-
-        // 5. Verification: Original list integrity
-        System.out.println("\nOriginal list size remains: " + consist.size());
+        // 4. Verify original list integrity
+        System.out.println("\nOriginal list remains untouched. Size: " + consist.size());
     }
 }
