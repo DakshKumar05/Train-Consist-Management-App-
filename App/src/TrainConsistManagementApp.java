@@ -1,8 +1,3 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 class Bogie {
     String type;
     int capacity;
@@ -12,44 +7,35 @@ class Bogie {
         this.capacity = capacity;
     }
 
-    // Helper method to get type for grouping
+    public int getCapacity() {
+        return capacity;
+    }
+
     public String getType() {
         return type;
     }
-
-    @Override
-    public String toString() {
-        return "(" + type + ", Cap: " + capacity + ")";
-    }
 }
 
+import java.util.*;
+        import java.util.stream.*;
+
 public class TrainConsistManagementApp {
+
     public static void main(String[] args) {
-        // 1. Create a diverse list of bogies
-        List<Bogie> consist = new ArrayList<>();
-        consist.add(new Bogie("Sleeper", 72));
-        consist.add(new Bogie("AC Chair", 60));
-        consist.add(new Bogie("Sleeper", 72));
-        consist.add(new Bogie("First Class", 24));
-        consist.add(new Bogie("AC Chair", 60));
-        consist.add(new Bogie("Goods-Rectangular", 100));
 
-        System.out.println("--- Flat Consist List ---");
-        System.out.println(consist);
+        // Create list of bogies
+        List<Bogie> bogies = new ArrayList<>();
 
-        // 2. Apply groupingBy to categorize bogies by their type
-        // Key: Bogie Type (String), Value: List of Bogies belonging to that type
-        Map<String, List<Bogie>> groupedBogies = consist.stream()
-                .collect(Collectors.groupingBy(Bogie::getType));
+        bogies.add(new Bogie("Sleeper", 72));
+        bogies.add(new Bogie("AC Chair", 60));
+        bogies.add(new Bogie("First Class", 30));
 
-        // 3. Display the structured output
-        System.out.println("\n--- Grouped Bogie Report ---");
-        groupedBogies.forEach((type, list) -> {
-            System.out.println("Category: [" + type + "] -> Count: " + list.size());
-            System.out.println("   Details: " + list);
-        });
+        // UC10: Calculate total seating capacity using Stream reduce
+        int totalSeats = bogies.stream()
+                .map(b -> b.getCapacity())     // Extract capacity
+                .reduce(0, Integer::sum);      // Aggregate using reduce
 
-        // 4. Verify original list integrity
-        System.out.println("\nOriginal list remains untouched. Size: " + consist.size());
+        // Output
+        System.out.println("Total Seating Capacity: " + totalSeats);
     }
 }
